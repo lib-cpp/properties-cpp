@@ -153,3 +153,33 @@ TEST(Property, signal_changed_is_emitted_with_correct_value_for_update)
 
     EXPECT_TRUE(expectation.satisfied());
 }
+
+namespace
+{
+struct TextField
+{
+    void move_cursor_to(int new_position)
+    {
+        cursor_position.set(new_position);
+    }
+    
+    com::ubuntu::Property<int> cursor_position;
+};
+}
+
+TEST(Property, cursor_position_changes_are_transported_correctly)
+{
+    int position = -1;
+
+    TextField tf;
+    
+    tf.cursor_position.changed().connect(
+        [&position](int value) 
+        { 
+            position = value; 
+        });
+
+    tf.move_cursor_to(22);
+
+    EXPECT_EQ(22, position);
+}
