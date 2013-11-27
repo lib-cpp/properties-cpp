@@ -26,16 +26,13 @@ TEST(Property, default_construction_yields_default_value)
     EXPECT_EQ(int{}, p1.get());
 
     static const int new_default_value = 42;
-    com::ubuntu::Property<int>::set_default_value(new_default_value);
-    com::ubuntu::Property<int> p2;
+    com::ubuntu::Property<int> p2{new_default_value};
 
     EXPECT_EQ(new_default_value, p2.get());
 }
 
 TEST(Property, copy_construction_yields_correct_value)
 {
-    com::ubuntu::Property<int>::set_default_value(0);
-
     static const int default_value = 42;
     com::ubuntu::Property<int> p1{default_value};
     com::ubuntu::Property<int> p2{p1};
@@ -45,8 +42,6 @@ TEST(Property, copy_construction_yields_correct_value)
 
 TEST(Property, assignment_operator_for_properties_works)
 {
-    com::ubuntu::Property<int>::set_default_value(0);
-
     static const int default_value = 42;
     com::ubuntu::Property<int> p1{default_value};
     com::ubuntu::Property<int> p2;
@@ -57,8 +52,6 @@ TEST(Property, assignment_operator_for_properties_works)
 
 TEST(Property, assignment_operator_for_raw_values_works)
 {
-    com::ubuntu::Property<int>::set_default_value(0);
-
     static const int default_value = 42;
     com::ubuntu::Property<int> p1;
     p1 = default_value;
@@ -68,8 +61,6 @@ TEST(Property, assignment_operator_for_raw_values_works)
 
 TEST(Property, equality_operator_for_properties_works)
 {
-    com::ubuntu::Property<int>::set_default_value(0);
-
     static const int default_value = 42;
     com::ubuntu::Property<int> p1{default_value};
     com::ubuntu::Property<int> p2;
@@ -80,8 +71,6 @@ TEST(Property, equality_operator_for_properties_works)
 
 TEST(Property, equality_operator_for_raw_values_works)
 {
-    com::ubuntu::Property<int>::set_default_value(0);
-
     static const int default_value = 42;
     com::ubuntu::Property<int> p1{default_value};
 
@@ -110,8 +99,6 @@ struct Expectation
 
 TEST(Property, signal_changed_is_emitted_with_correct_value_for_set)
 {
-    com::ubuntu::Property<int>::set_default_value(0);
-
     static const int default_value = 42;
     com::ubuntu::Property<int> p1;
     Expectation<int> expectation{default_value};
@@ -125,8 +112,6 @@ TEST(Property, signal_changed_is_emitted_with_correct_value_for_set)
 
 TEST(Property, signal_changed_is_emitted_with_correct_value_for_assignment)
 {
-    com::ubuntu::Property<int>::set_default_value(0);
-
     static const int default_value = 42;
     com::ubuntu::Property<int> p1;
 
@@ -141,8 +126,6 @@ TEST(Property, signal_changed_is_emitted_with_correct_value_for_assignment)
 
 TEST(Property, signal_changed_is_emitted_with_correct_value_for_update)
 {
-    com::ubuntu::Property<int>::set_default_value(0);
-
     static const int default_value = 42;
     com::ubuntu::Property<int> p1;
 

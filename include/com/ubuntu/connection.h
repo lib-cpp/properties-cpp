@@ -31,8 +31,7 @@ namespace ubuntu
  */
 class Connection
 {
-public:
-    typedef std::function<void()> Disconnector;
+public:    
     typedef std::function<void(const std::function<void()>&)> Dispatcher;
 
     /**
@@ -58,10 +57,12 @@ public:
      */
     inline void dispatch_via(const Dispatcher& dispatcher)
     {
-        d->dispatcher_installer(dispatcher);
+        if (d->dispatcher_installer)
+            d->dispatcher_installer(dispatcher);
     }
 
 private:
+    typedef std::function<void()> Disconnector;
     typedef std::function<void(const Dispatcher&)> DispatcherInstaller;
 
     template<typename ... Arguments> friend class Signal;
@@ -70,6 +71,11 @@ private:
                       const DispatcherInstaller& installer)
         : d(std::make_shared<Private>(disconnector, installer))
     {
+    }
+
+    inline void reset()
+    {
+        d->reset();
     }
 
     struct Private
@@ -81,23 +87,40 @@ private:
         {
         }
 
+        inline void reset()
+        {
+            std::lock_guard<std::mutex> lg(guard);
+            reset_locked();
+        }
+
+        inline void reset_locked()
+        {
+            static const Connection::Disconnector empty_disconnector{};
+            static const Connection::DispatcherInstaller empty_dispatcher_installer{};
+
+            disconnector = empty_disconnector;
+            dispatcher_installer = empty_dispatcher_installer;
+        }
+
         inline void disconnect()
         {
             static const Connection::Disconnector empty_disconnector{};
 
             std::lock_guard<std::mutex> lg(guard);
 
-            if (!disconnector)
-                return;
+            if (disconnector)
+                disconnector();
 
-            disconnector();
-            disconnector = empty_disconnector;
+            reset_locked();
         }
 
         std::mutex guard;
         Connection::Disconnector disconnector;
         Connection::DispatcherInstaller dispatcher_installer;
     };
+
+    // The whole class is implicitly shared and we thus forward our complete
+    // shared state to a private structure that is lifetime-managed by a shared_ptr.
     std::shared_ptr<Private> d;
 };
 

@@ -53,6 +53,7 @@ private:
 
         Slot slot;
         Connection::Dispatcher dispatcher;
+        Connection connection;
     };
 
 public:
@@ -63,7 +64,12 @@ public:
     {
     }
 
-    inline ~Signal() = default;
+    inline ~Signal()
+    {
+        std::lock_guard<std::mutex> lg(d->guard);
+        for (auto slot : d->slots)
+            slot.connection.reset();
+    }
 
     // Copy construction, assignment and equality comparison are disabled.
     Signal(const Signal&) = delete;
@@ -81,27 +87,38 @@ public:
      */
     inline Connection connect(const Slot& slot) const
     {
+        // Helpers to initialize an invalid connection.
+        static const Connection::Disconnector empty_disconnector{};
+        static const Connection::DispatcherInstaller empty_dispatcher_installer{};
+
         // The default dispatcher immediately executes the function object
         // provided as argument on whatever thread is currently running.
         static const Connection::Dispatcher default_dispatcher
                 = [](const std::function<void()>& handler) { handler(); };
 
+        Connection conn{empty_disconnector, empty_dispatcher_installer};
+
         std::lock_guard<std::mutex> lg(d->guard);
 
         auto result = d->slots.insert(
                     d->slots.end(),
-                    SlotWrapper{slot, default_dispatcher});
+                    SlotWrapper{slot, default_dispatcher, conn});
 
-        return Connection(
-                    std::bind(
-                        &Private::disconnect_slot_for_iterator,
-                        d,
-                        result),
-                    std::bind(
-                        &Private::install_dispatcher_for_iterator,
-                        d,
-                        std::placeholders::_1,
-                        result));
+        // We implicitly share our internal state with the connection here
+        // by passing in our private bits contained in 'd' to the std::bind call.
+        // This admittedly uncommon approach allows us to cleanly manage connection
+        // and signal lifetimes without the need to mark everything as mutable.
+        conn.d->disconnector = std::bind(
+                    &Private::disconnect_slot_for_iterator,
+                    d,
+                    result);
+        conn.d->dispatcher_installer = std::bind(
+                    &Private::install_dispatcher_for_iterator,
+                    d,
+                    std::placeholders::_1,
+                    result);
+
+        return conn;
     }
 
     /**
@@ -148,7 +165,8 @@ private:
 };
 
 /**
- * @brief A signal class that observers can subscribe to, template specialization for signals without arguments.
+ * @brief A signal class that observers can subscribe to,
+ * template specialization for signals without arguments.
  */
 template<>
 class Signal<void>
@@ -169,6 +187,7 @@ private:
 
         Slot slot;
         Connection::Dispatcher dispatcher;
+        Connection connection;
     };
 
 public:
@@ -179,7 +198,12 @@ public:
     {
     }
 
-    inline ~Signal() = default;
+    inline ~Signal()
+    {
+        std::lock_guard<std::mutex> lg(d->guard);
+        for (auto slot : d->slots)
+            slot.connection.reset();
+    }
 
     // Copy construction, assignment and equality comparison are disabled.
     Signal(const Signal&) = delete;
@@ -197,25 +221,38 @@ public:
      */
     inline Connection connect(const Slot& slot) const
     {
+        // Helpers to initialize an invalid connection.
+        static const Connection::Disconnector empty_disconnector{};
+        static const Connection::DispatcherInstaller empty_dispatcher_installer{};
+
         // The default dispatcher immediately executes the function object
         // provided as argument on whatever thread is currently running.
         static const Connection::Dispatcher default_dispatcher
                 = [](const std::function<void()>& handler) { handler(); };
+
+        Connection conn{empty_disconnector, empty_dispatcher_installer};
+
         std::lock_guard<std::mutex> lg(d->guard);
+
         auto result = d->slots.insert(
                     d->slots.end(),
-                    SlotWrapper{slot, default_dispatcher});
+                    SlotWrapper{slot, default_dispatcher, conn});
 
-        return Connection(
-                    std::bind(
-                        &Private::disconnect_slot_for_iterator,
-                        d,
-                        result),
-                    std::bind(
-                        &Private::install_dispatcher_for_iterator,
-                        d,
-                        std::placeholders::_1,
-                        result));
+        // We implicitly share our internal state with the connection here
+        // by passing in our private bits contained in 'd' to the std::bind call.
+        // This admittedly uncommon approach allows us to cleanly manage connection
+        // and signal lifetimes without the need to mark everything as mutable.
+        conn.d->disconnector = std::bind(
+                    &Private::disconnect_slot_for_iterator,
+                    d,
+                    result);
+        conn.d->dispatcher_installer = std::bind(
+                    &Private::install_dispatcher_for_iterator,
+                    d,
+                    std::placeholders::_1,
+                    result);
+
+        return conn;
     }
 
     /**
