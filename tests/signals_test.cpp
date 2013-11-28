@@ -93,6 +93,20 @@ TEST(Signal, disconnect_via_scoped_connection_results_in_slots_not_invoked_anymo
     EXPECT_FALSE(expectation.satisfied());
 }
 
+TEST(Signal, a_signal_going_out_of_scope_disconnects_from_slots)
+{
+    auto signal = std::make_shared<com::ubuntu::Signal<int>>();
+
+    auto connection = signal->connect([](int value) { std::cout << value << std::endl; });
+
+    signal.reset();
+
+    com::ubuntu::Connection::Dispatcher dispatcher{};
+
+    EXPECT_NO_THROW(connection.disconnect());
+    EXPECT_NO_THROW(connection.dispatch_via(dispatcher));
+}
+
 #include <queue>
 
 namespace
@@ -116,8 +130,11 @@ struct EventLoop
                         std::chrono::milliseconds{500},
                         [this]() { return handlers.size() > 0; });
 
-            handlers.front()();
-            handlers.pop();
+            while (handlers.size() > 0)
+            {
+                handlers.front()();
+                handlers.pop();
+            }
         }
     }
 
@@ -150,12 +167,10 @@ TEST(Signal, installing_a_custom_dispatcher_ensures_invocation_on_correct_thread
     // thread the handler is being called upon equals the thread that the
     // event loop is running upon.
     auto connection = s.connect(
-                [&dispatcher, dispatcher_thread_id](int value, double d)
+                [&dispatcher, dispatcher_thread_id](int value, double)
                 {
                     EXPECT_EQ(dispatcher_thread_id,
-                              std::this_thread::get_id());
-
-                    std::cout << d << std::endl;
+                              std::this_thread::get_id());                    
 
                     if (value == expected_invocation_count)
                         dispatcher.stop();

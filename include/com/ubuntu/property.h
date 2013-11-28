@@ -33,13 +33,6 @@ namespace ubuntu
 template<typename T>
 class Property
 {
-  private:
-    inline static T& mutable_default_value()
-    {
-        static T default_value = T{};
-        return default_value;
-    }
-
   public:
     /**
      * @brief ValueType refers to the type of the contained value.
@@ -47,28 +40,10 @@ class Property
     typedef T ValueType;
 
     /**
-     * @brief Queries the default value set up for a specific type.
-     * @return A non-mutable reference to the default value.
-     */
-    inline static const T& default_value()
-    {
-        return mutable_default_value();
-    }
-
-    /**
-     * @brief Adjusts the default value set up for a specific type.
-     * @post default_value() == new_default_value;
-     */
-    inline static void set_default_value(const T& new_default_value)
-    {
-        mutable_default_value() = new_default_value;
-    }
-
-    /**
      * @brief Property creates a new instance of property and initializes the contained value.
      * @param t The initial value, defaults to Property<T>::default_value().
      */
-    inline explicit Property(const T& t = Property<T>::default_value()) : value{t}
+    inline explicit Property(const T& t = T{}) : value{t}
     {
     }
 

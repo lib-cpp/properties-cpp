@@ -72,8 +72,11 @@ struct EventLoop
                         std::chrono::milliseconds{500},
                         [this]() { return handlers.size() > 0; });
 
-            handlers.front()();
-            handlers.pop();
+            while (handlers.size() > 0)
+            {
+                handlers.front()();
+                handlers.pop();
+            }
         }
     }
 
