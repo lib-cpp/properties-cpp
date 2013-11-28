@@ -15,16 +15,14 @@
  *
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
-#ifndef COM_UBUNTU_PROPERTY_H_
-#define COM_UBUNTU_PROPERTY_H_
+#ifndef CORE_PROPERTY_H_
+#define CORE_PROPERTY_H_
 
-#include <com/ubuntu/signal.h>
+#include <core/signal.h>
 
 #include <iostream>
 
-namespace com
-{
-namespace ubuntu
+namespace core
 {
 /**
  * @brief A very simple, templated class that allows for uniform declaration of get-able/set-able/observable members.
@@ -179,6 +177,5 @@ class Property
     Signal<T> signal_changed;
 };
 }
-}
 
-#endif // COM_UBUNTU_PROPERTY_H_
+#endif // CORE_PROPERTY_H_
