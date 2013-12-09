@@ -23,7 +23,7 @@ struct TextField
         cursor_position.set(new_position);
     }
     
-    com::ubuntu::Property<int> cursor_position;
+    core::Property<int> cursor_position;
 };
 }
 
@@ -101,7 +101,7 @@ TEST(Signal, installing_a_custom_dispatcher_ensures_invocation_on_correct_thread
     std::thread::id dispatcher_thread_id = dispatcher_thread.get_id();
 
     // The signal that we want to dispatch via the event loop.
-    com::ubuntu::Signal<int, double> s;
+    core::Signal<int, double> s;
 
     static const int expected_invocation_count = 10000;
 

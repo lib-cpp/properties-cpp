@@ -15,6 +15,6 @@
 # Authored by: Thomas Voss <thomas.voss@canonical.com>
 
 install(
-  DIRECTORY com
-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}
+  DIRECTORY core
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/
 )

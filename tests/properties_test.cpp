@@ -16,17 +16,17 @@
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
 
-#include <com/ubuntu/property.h>
+#include <core/property.h>
 
 #include <gtest/gtest.h>
 
 TEST(Property, default_construction_yields_default_value)
 {
-    com::ubuntu::Property<int> p1;
+    core::Property<int> p1;
     EXPECT_EQ(int{}, p1.get());
 
     static const int new_default_value = 42;
-    com::ubuntu::Property<int> p2{new_default_value};
+    core::Property<int> p2{new_default_value};
 
     EXPECT_EQ(new_default_value, p2.get());
 }
@@ -34,8 +34,8 @@ TEST(Property, default_construction_yields_default_value)
 TEST(Property, copy_construction_yields_correct_value)
 {
     static const int default_value = 42;
-    com::ubuntu::Property<int> p1{default_value};
-    com::ubuntu::Property<int> p2{p1};
+    core::Property<int> p1{default_value};
+    core::Property<int> p2{p1};
 
     EXPECT_EQ(default_value, p2.get());
 }
@@ -43,8 +43,8 @@ TEST(Property, copy_construction_yields_correct_value)
 TEST(Property, assignment_operator_for_properties_works)
 {
     static const int default_value = 42;
-    com::ubuntu::Property<int> p1{default_value};
-    com::ubuntu::Property<int> p2;
+    core::Property<int> p1{default_value};
+    core::Property<int> p2;
     p2 = p1;
 
     EXPECT_EQ(default_value, p2.get());
@@ -53,7 +53,7 @@ TEST(Property, assignment_operator_for_properties_works)
 TEST(Property, assignment_operator_for_raw_values_works)
 {
     static const int default_value = 42;
-    com::ubuntu::Property<int> p1;
+    core::Property<int> p1;
     p1 = default_value;
 
     EXPECT_EQ(default_value, p1.get());
@@ -62,8 +62,8 @@ TEST(Property, assignment_operator_for_raw_values_works)
 TEST(Property, equality_operator_for_properties_works)
 {
     static const int default_value = 42;
-    com::ubuntu::Property<int> p1{default_value};
-    com::ubuntu::Property<int> p2;
+    core::Property<int> p1{default_value};
+    core::Property<int> p2;
     p2 = p1;
 
     EXPECT_EQ(p1, p2);
@@ -72,7 +72,7 @@ TEST(Property, equality_operator_for_properties_works)
 TEST(Property, equality_operator_for_raw_values_works)
 {
     static const int default_value = 42;
-    com::ubuntu::Property<int> p1{default_value};
+    core::Property<int> p1{default_value};
 
     EXPECT_EQ(default_value, p1);
 }
@@ -100,7 +100,7 @@ struct Expectation
 TEST(Property, signal_changed_is_emitted_with_correct_value_for_set)
 {
     static const int default_value = 42;
-    com::ubuntu::Property<int> p1;
+    core::Property<int> p1;
     Expectation<int> expectation{default_value};
 
     p1.changed().connect([&expectation](int value) { expectation.triggered = true; expectation.current_value = value; });
@@ -113,7 +113,7 @@ TEST(Property, signal_changed_is_emitted_with_correct_value_for_set)
 TEST(Property, signal_changed_is_emitted_with_correct_value_for_assignment)
 {
     static const int default_value = 42;
-    com::ubuntu::Property<int> p1;
+    core::Property<int> p1;
 
     Expectation<int> expectation{42};
 
@@ -127,7 +127,7 @@ TEST(Property, signal_changed_is_emitted_with_correct_value_for_assignment)
 TEST(Property, signal_changed_is_emitted_with_correct_value_for_update)
 {
     static const int default_value = 42;
-    com::ubuntu::Property<int> p1;
+    core::Property<int> p1;
 
     Expectation<int> expectation{default_value};
 
@@ -146,7 +146,7 @@ struct TextField
         cursor_position.set(new_position);
     }
     
-    com::ubuntu::Property<int> cursor_position;
+    core::Property<int> cursor_position;
 };
 }
 

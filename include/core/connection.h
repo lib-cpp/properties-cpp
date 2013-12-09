@@ -22,9 +22,7 @@
 #include <memory>
 #include <mutex>
 
-namespace com
-{
-namespace ubuntu
+namespace core
 {
 /**
  * @brief The Connection class models a signal-slot connection.
@@ -159,8 +157,6 @@ public:
 private:
     Connection connection;
 };
-
-}
 }
 
 #endif // COM_UBUNTU_CONNECTION_H_

@@ -16,7 +16,7 @@
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
 
-#include <com/ubuntu/signal.h>
+#include <core/signal.h>
 
 #include <gtest/gtest.h>
 
@@ -49,7 +49,7 @@ TEST(Signal, emission_works)
 {
     Expectation<int> expectation{42};
 
-    com::ubuntu::Signal<int> s;
+    core::Signal<int> s;
     s.connect([&expectation](int value) { expectation.triggered = true; expectation.current_value = value; });
 
     s(42);
@@ -61,7 +61,7 @@ TEST(Signal, disconnect_results_in_slots_not_invoked_anymore)
 {
     Expectation<int> expectation{42};
 
-    com::ubuntu::Signal<int> s;
+    core::Signal<int> s;
     auto connection = s.connect(
                 [&expectation](int value)
                 {
@@ -78,7 +78,7 @@ TEST(Signal, disconnect_via_scoped_connection_results_in_slots_not_invoked_anymo
 {
     Expectation<int> expectation{42};
 
-    com::ubuntu::Signal<int> s;
+    core::Signal<int> s;
     auto connection = s.connect(
                 [&expectation](int value)
                 {
@@ -86,7 +86,7 @@ TEST(Signal, disconnect_via_scoped_connection_results_in_slots_not_invoked_anymo
                     expectation.current_value = value;
                 });
     {
-        com::ubuntu::ScopedConnection sc{connection};
+        core::ScopedConnection sc{connection};
     }
     s(42);
 
@@ -95,13 +95,13 @@ TEST(Signal, disconnect_via_scoped_connection_results_in_slots_not_invoked_anymo
 
 TEST(Signal, a_signal_going_out_of_scope_disconnects_from_slots)
 {
-    auto signal = std::make_shared<com::ubuntu::Signal<int>>();
+    auto signal = std::make_shared<core::Signal<int>>();
 
     auto connection = signal->connect([](int value) { std::cout << value << std::endl; });
 
     signal.reset();
 
-    com::ubuntu::Connection::Dispatcher dispatcher{};
+    core::Connection::Dispatcher dispatcher{};
 
     EXPECT_NO_THROW(connection.disconnect());
     EXPECT_NO_THROW(connection.dispatch_via(dispatcher));
@@ -159,7 +159,7 @@ TEST(Signal, installing_a_custom_dispatcher_ensures_invocation_on_correct_thread
     std::thread::id dispatcher_thread_id = dispatcher_thread.get_id();
 
     // The signal that we want to dispatch via the event loop.
-    com::ubuntu::Signal<int, double> s;
+    core::Signal<int, double> s;
 
     static const int expected_invocation_count = 10000;
 

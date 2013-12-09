@@ -18,7 +18,7 @@
 #ifndef COM_UBUNTU_SIGNAL_H_
 #define COM_UBUNTU_SIGNAL_H_
 
-#include <com/ubuntu/connection.h>
+#include <core/connection.h>
 
 #include <functional>
 #include <iostream>
@@ -26,9 +26,7 @@
 #include <mutex>
 #include <set>
 
-namespace com
-{
-namespace ubuntu
+namespace core
 {
 /**
  * @brief A signal class that observers can subscribe to.
@@ -294,7 +292,6 @@ private:
     };
     std::shared_ptr<Private> d;
 };
-}
 }
 
 #endif // COM_UBUNTU_SIGNAL_H_
