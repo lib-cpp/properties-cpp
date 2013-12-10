@@ -10,7 +10,7 @@ Build-Depends: cmake,
                lcov,
 Standards-Version: 3.9.4
 Section: libs
-Homepage: https://launchpad.net/process-cpp
+Homepage: https://launchpad.net/properties-cpp
 # If you aren't a member of ~phablet-team but need to upload packaging changes,
 # just go ahead. ~phablet-team will notice and sync up the code again.
 Vcs-Bzr: https://code.launchpad.net/~phablet-team/properties-cpp/trunk
@@ -23,11 +23,17 @@ Multi-Arch: same
 Recommends: libproperties-cpp-doc
 Depends: ${misc:Depends},
 Description: C++11 library providing properties/signals. - dev headers
- All the development headers and libraries for properties-cpp.
+ Properties-cpp is a C++11 library providing properties/signals.
+ .
+ This package includes all the development headers and libraries for 
+ properties-cpp.
 
 Package: libproperties-cpp-doc
 Section: doc
 Architecture: all
 Depends: ${misc:Depends},
 Description: Documentation files for libproperties-cpp-dev
- Documentation files for the libproperties-cpp development.
+ Properties-cpp is a C++11 library providing properties/signals.
+ .
+ This package includes the documentation files for the libproperties-cpp 
+ development.
