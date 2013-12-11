@@ -1,6 +1,6 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: process-cpp
-Source: https://launchpad.net/process-cpp
+Upstream-Name: properties-cpp
+Source: https://launchpad.net/properties-cpp
 
 Files: *
 Copyright: 2013 Canonical Ltd.
