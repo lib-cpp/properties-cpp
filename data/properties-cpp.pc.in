@@ -6,4 +6,4 @@ includedir=${exec_prefix}/include
 Name: @CMAKE_PROJECT_NAME@
 Description: A very simple convenience library for handling properties and signals in C++11.
 Version: @PROPERTIES_CPP_VERSION_MAJOR@.@PROPERTIES_CPP_VERSION_MINOR@.@PROPERTIES_CPP_VERSION_PATCH@
-Cflags: -I${includedir}/properties-cpp
+Cflags: -I${includedir}
