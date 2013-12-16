@@ -1,5 +1,21 @@
-properties-cpp (0.0.1) UNRELEASED; urgency=low
+properties-cpp (0.0.1+14.04.20131216-0ubuntu1) trusty; urgency=low
 
+  [ Thomas Voß ]
   * Initial release.
 
- -- Thomas Voß <thomas.voss@canonical.com>  Wed, 13 Nov 2013 10:38:55 +0100
+  [ thomas-voss ]
+  * Initial commit.
+  * Add packaging setup.
+  * Add a README.md. Add a COPYING file.
+  * Merged lp:~thomas-voss/properties-cpp/cleanup.
+  * Merged lp:~thomas-voss/properties-cpp/adjust-namespace-to-core.
+  * Merged lp:~thomas-voss/properties-cpp/fix-pkgconfig-include-path.
+  * Removed license statements from build files.
+
+  [ Timo Jyrinki ]
+  * s/process-cpp/properties-cpp/ and expanding descriptions.
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 8
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Mon, 16 Dec 2013 08:17:31 +0000
