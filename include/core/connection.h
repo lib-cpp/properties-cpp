@@ -24,6 +24,7 @@
 
 namespace core
 {
+class ScopedConnection;
 /**
  * @brief The Connection class models a signal-slot connection.
  */
@@ -60,6 +61,8 @@ public:
     }
 
 private:
+    friend class ScopedConnection;
+
     typedef std::function<void()> Disconnector;
     typedef std::function<void(const Dispatcher&)> DispatcherInstaller;
 
@@ -136,6 +139,11 @@ public:
     {
     }
 
+    inline ScopedConnection(ScopedConnection&& rhs) : connection(rhs.connection)
+    {
+        rhs.connection.d.reset();
+    }
+
     ScopedConnection(const ScopedConnection&) = delete;
 
     /**
@@ -149,6 +157,14 @@ public:
         } catch(...)
         {
         }
+    }
+
+    inline ScopedConnection& operator=(ScopedConnection&& rhs)
+    {
+        connection = rhs.connection;
+        rhs.connection.d.reset();
+
+        return *this;
     }
 
     ScopedConnection& operator=(const ScopedConnection&) = delete;

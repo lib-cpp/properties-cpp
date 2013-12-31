@@ -26,6 +26,11 @@ namespace core
 {
 /**
  * @brief A very simple, templated class that allows for uniform declaration of get-able/set-able/observable members.
+ *
+ * A note on thread-safety: The property class itself does not give any thread-safety guarantees.
+ * That is, consumers must not assume that concurrent get() and set() operations are synchronized by
+ * this class.
+ *
  * @tparam The type of the value contained within the property.
  */
 template<typename T>
@@ -167,7 +172,7 @@ class Property
     }
 
   protected:
-    inline T& mutable_get() const
+    inline virtual T& mutable_get() const
     {
         return value;
     }
