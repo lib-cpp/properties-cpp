@@ -39,6 +39,9 @@ public:
      */
     inline bool is_connected() const
     {
+        if (!d)
+            return false;
+
         return (d->disconnector ? true : false);
     }
 
@@ -47,7 +50,8 @@ public:
      */
     inline void disconnect()
     {
-        d->disconnect();
+        if (d)
+            d->disconnect();
     }
 
     /**
@@ -56,7 +60,7 @@ public:
      */
     inline void dispatch_via(const Dispatcher& dispatcher)
     {
-        if (d->dispatcher_installer)
+        if (d && d->dispatcher_installer)
             d->dispatcher_installer(dispatcher);
     }
 
@@ -76,7 +80,8 @@ private:
 
     inline void reset()
     {
-        d->reset();
+        if (d)
+            d->reset();
     }
 
     struct Private
