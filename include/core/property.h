@@ -20,7 +20,7 @@
 
 #include <core/signal.h>
 
-#include <iostream>
+#include <set>
 
 namespace core
 {
@@ -171,6 +171,17 @@ class Property
         return false;
     }
 
+    friend inline const Property<T>& operator|(const Property<T>& lhs, Property<T>& rhs)
+    {
+        rhs.connections.emplace(
+                    lhs.changed().connect(
+                        std::bind(
+                            &Property<T>::set,
+                            std::ref(rhs),
+                            std::placeholders::_1)));
+        return lhs;
+    }
+
   protected:
     inline virtual T& mutable_get() const
     {
@@ -180,6 +191,7 @@ class Property
   private:
     mutable T value;
     Signal<T> signal_changed;
+    std::set<ScopedConnection> connections;
 };
 }
 

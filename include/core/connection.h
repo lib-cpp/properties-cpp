@@ -78,6 +78,11 @@ private:
     {
     }
 
+    inline bool operator<(const Connection& rhs) const
+    {
+        return d < rhs.d;
+    }
+
     inline void reset()
     {
         if (d)
@@ -174,6 +179,11 @@ public:
 
     ScopedConnection& operator=(const ScopedConnection&) = delete;
     bool operator==(const ScopedConnection&) = delete;
+
+    inline bool operator<(const ScopedConnection& rhs) const
+    {
+        return connection < rhs.connection;
+    }
 
 private:
     Connection connection;

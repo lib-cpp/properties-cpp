@@ -166,3 +166,14 @@ TEST(Property, cursor_position_changes_are_transported_correctly)
 
     EXPECT_EQ(22, position);
 }
+
+TEST(Property, chaining_properties_works)
+{
+    core::Property<int> p1, p2;
+
+    p1 | p2;
+
+    p1.set(42);
+
+    EXPECT_EQ(42, p2.get());
+}
