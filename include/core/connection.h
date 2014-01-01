@@ -149,9 +149,8 @@ public:
     {
     }
 
-    inline ScopedConnection(ScopedConnection&& rhs) : connection(rhs.connection)
+    inline ScopedConnection(ScopedConnection&& rhs) : connection(std::move(rhs.connection))
     {
-        rhs.connection.d.reset();
     }
 
     ScopedConnection(const ScopedConnection&) = delete;
@@ -171,9 +170,7 @@ public:
 
     inline ScopedConnection& operator=(ScopedConnection&& rhs)
     {
-        connection = rhs.connection;
-        rhs.connection.d.reset();
-
+        connection = std::move(rhs.connection);
         return *this;
     }
 
