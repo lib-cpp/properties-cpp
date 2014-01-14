@@ -20,12 +20,17 @@
 
 #include <core/signal.h>
 
-#include <iostream>
+#include <set>
 
 namespace core
 {
 /**
  * @brief A very simple, templated class that allows for uniform declaration of get-able/set-able/observable members.
+ *
+ * A note on thread-safety: The property class itself does not give any thread-safety guarantees.
+ * That is, consumers must not assume that concurrent get() and set() operations are synchronized by
+ * this class.
+ *
  * @tparam The type of the value contained within the property.
  */
 template<typename T>
@@ -166,8 +171,19 @@ class Property
         return false;
     }
 
+    friend inline const Property<T>& operator|(const Property<T>& lhs, Property<T>& rhs)
+    {
+        rhs.connections.emplace(
+                    lhs.changed().connect(
+                        std::bind(
+                            &Property<T>::set,
+                            std::ref(rhs),
+                            std::placeholders::_1)));
+        return lhs;
+    }
+
   protected:
-    inline T& mutable_get() const
+    inline virtual T& mutable_get() const
     {
         return value;
     }
@@ -175,6 +191,7 @@ class Property
   private:
     mutable T value;
     Signal<T> signal_changed;
+    std::set<ScopedConnection> connections;
 };
 }
 

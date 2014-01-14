@@ -24,6 +24,7 @@
 
 namespace core
 {
+class ScopedConnection;
 /**
  * @brief The Connection class models a signal-slot connection.
  */
@@ -38,6 +39,9 @@ public:
      */
     inline bool is_connected() const
     {
+        if (!d)
+            return false;
+
         return (d->disconnector ? true : false);
     }
 
@@ -46,7 +50,8 @@ public:
      */
     inline void disconnect()
     {
-        d->disconnect();
+        if (d)
+            d->disconnect();
     }
 
     /**
@@ -55,11 +60,13 @@ public:
      */
     inline void dispatch_via(const Dispatcher& dispatcher)
     {
-        if (d->dispatcher_installer)
+        if (d && d->dispatcher_installer)
             d->dispatcher_installer(dispatcher);
     }
 
 private:
+    friend class ScopedConnection;
+
     typedef std::function<void()> Disconnector;
     typedef std::function<void(const Dispatcher&)> DispatcherInstaller;
 
@@ -71,9 +78,15 @@ private:
     {
     }
 
+    inline bool operator<(const Connection& rhs) const
+    {
+        return d < rhs.d;
+    }
+
     inline void reset()
     {
-        d->reset();
+        if (d)
+            d->reset();
     }
 
     struct Private
@@ -136,6 +149,10 @@ public:
     {
     }
 
+    inline ScopedConnection(ScopedConnection&& rhs) : connection(std::move(rhs.connection))
+    {
+    }
+
     ScopedConnection(const ScopedConnection&) = delete;
 
     /**
@@ -151,8 +168,19 @@ public:
         }
     }
 
+    inline ScopedConnection& operator=(ScopedConnection&& rhs)
+    {
+        connection = std::move(rhs.connection);
+        return *this;
+    }
+
     ScopedConnection& operator=(const ScopedConnection&) = delete;
     bool operator==(const ScopedConnection&) = delete;
+
+    inline bool operator<(const ScopedConnection& rhs) const
+    {
+        return connection < rhs.connection;
+    }
 
 private:
     Connection connection;
