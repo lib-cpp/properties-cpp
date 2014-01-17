@@ -7,8 +7,7 @@ Build-Depends: cmake,
                google-mock,
                graphviz,
                libgtest-dev,
-               lcov,
-Standards-Version: 3.9.4
+Standards-Version: 3.9.5
 Section: libs
 Homepage: https://launchpad.net/properties-cpp
 # If you aren't a member of ~phablet-team but need to upload packaging changes,
