@@ -1,3 +1,19 @@
+properties-cpp (0.0.1+14.04.20140121-0ubuntu1) trusty; urgency=low
+
+  [ thomas-voss ]
+  * Refactor to rely on default move-operator for core::Connection.
+    Enable property chaining. Make sure that an abandoned connection
+    safely accesses its private member. Make ScopedConnection a movable
+    type.
+
+  [ Łukasz 'sil2100' Zemczak ]
+  * Let's get rid of lcov as a build-dep.
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 12
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Tue, 21 Jan 2014 11:50:25 +0000
+
 properties-cpp (0.0.1+14.04.20140110-0ubuntu1) trusty; urgency=low
 
   * Automatic snapshot from revision 9
