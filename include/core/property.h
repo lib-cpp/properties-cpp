@@ -42,11 +42,20 @@ class Property
      */
     typedef T ValueType;
 
+    typedef std::function<ValueType()> Getter;
+    
+    typedef std::function<void(const ValueType&)> Setter;
+
     /**
      * @brief Property creates a new instance of property and initializes the contained value.
      * @param t The initial value, defaults to Property<T>::default_value().
      */
-    inline explicit Property(const T& t = T{}) : value{t}
+    inline explicit Property(const T& t = T{}, 
+                             const Getter& getter = Getter{}, 
+                             const Setter& setter = Setter{}) 
+            : value{t},
+        getter{getter},
+        setter{setter}
     {
     }
 
@@ -129,6 +138,10 @@ class Property
         if (value != new_value)
         {
             value = new_value;
+
+            if (setter)
+                setter(value);
+
             signal_changed(value);
         }
     }
@@ -139,6 +152,9 @@ class Property
      */
     inline virtual const T& get() const
     {
+        if (getter)
+            mutable_get() = getter();
+        
         return value;
     }
 
@@ -171,6 +187,16 @@ class Property
         return false;
     }
 
+    inline void install(const Setter& setter)
+    {
+        this->setter = setter;
+    }
+
+    inline void install(const Getter& getter)
+    {
+        this->getter = getter;
+    }
+
     friend inline const Property<T>& operator|(const Property<T>& lhs, Property<T>& rhs)
     {
         rhs.connections.emplace(
@@ -190,6 +216,8 @@ class Property
 
   private:
     mutable T value;
+    Getter getter;
+    Setter setter;
     Signal<T> signal_changed;
     std::set<ScopedConnection> connections;
 };
