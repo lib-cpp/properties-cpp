@@ -1,3 +1,10 @@
+properties-cpp (0.0.1+14.04.20140220-0ubuntu1) trusty; urgency=low
+
+  [ thomas-voss ]
+  * Allow for dispatching setting and getting to functors.
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Thu, 20 Feb 2014 20:13:02 +0000
+
 properties-cpp (0.0.1+14.04.20140121-0ubuntu1) trusty; urgency=low
 
   [ thomas-voss ]
