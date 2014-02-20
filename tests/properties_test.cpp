@@ -177,3 +177,34 @@ TEST(Property, chaining_properties_works)
 
     EXPECT_EQ(42, p2.get());
 }
+
+TEST(Property, getter_is_invoked_for_get_operations)
+{
+    bool invoked = false;
+    auto getter = [&invoked]()
+    {
+        invoked = true;
+        return 42;
+    };
+
+    core::Property<int> prop;
+    prop.install(getter);
+
+    EXPECT_EQ(42, prop.get());
+    EXPECT_TRUE(invoked);
+}
+
+TEST(Property, setter_is_invoked_for_set_operations)
+{
+    int value = 0;
+    auto setter = [&value](int new_value)
+    {
+        value = new_value;
+    };
+
+    core::Property<int> prop;
+    prop.install(setter);
+
+    prop.set(42);
+    EXPECT_EQ(42, value);
+}

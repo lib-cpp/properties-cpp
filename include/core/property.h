@@ -43,10 +43,23 @@ class Property
     typedef T ValueType;
 
     /**
+     * @brief Getter refers to the function type for dispatching get operations to.
+     */
+    typedef std::function<ValueType()> Getter;
+    
+    /**
+     * @brief Setter refers to the function type for dispatching set operations to.
+     */
+    typedef std::function<void(const ValueType&)> Setter;
+
+    /**
      * @brief Property creates a new instance of property and initializes the contained value.
      * @param t The initial value, defaults to Property<T>::default_value().
      */
-    inline explicit Property(const T& t = T{}) : value{t}
+    inline explicit Property(const T& t = T{})
+            : value{t},
+              getter{},
+              setter{}
     {
     }
 
@@ -129,6 +142,10 @@ class Property
         if (value != new_value)
         {
             value = new_value;
+
+            if (setter)
+                setter(value);
+
             signal_changed(value);
         }
     }
@@ -139,6 +156,9 @@ class Property
      */
     inline virtual const T& get() const
     {
+        if (getter)
+            mutable_get() = getter();
+        
         return value;
     }
 
@@ -171,6 +191,24 @@ class Property
         return false;
     }
 
+    /**
+     * @brief install takes the provided functor and installs it for dispatching all set operations.
+     * @param setter The functor to be invoked for set operations.
+     */
+    inline void install(const Setter& setter)
+    {
+        this->setter = setter;
+    }
+
+    /**
+     * @brief install takes the provided functor and installs it for dispatching all get operations.
+     * @param getter The functor to be invoked for get operations.
+     */
+    inline void install(const Getter& getter)
+    {
+        this->getter = getter;
+    }
+
     friend inline const Property<T>& operator|(const Property<T>& lhs, Property<T>& rhs)
     {
         rhs.connections.emplace(
@@ -190,6 +228,8 @@ class Property
 
   private:
     mutable T value;
+    Getter getter;
+    Setter setter;
     Signal<T> signal_changed;
     std::set<ScopedConnection> connections;
 };
