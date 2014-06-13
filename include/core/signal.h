@@ -65,7 +65,7 @@ public:
     inline ~Signal()
     {
         std::lock_guard<std::mutex> lg(d->guard);
-        for (auto slot : d->slots)
+        for (auto slot : d->slot_list)
             slot.connection.reset();
     }
 
@@ -98,8 +98,8 @@ public:
 
         std::lock_guard<std::mutex> lg(d->guard);
 
-        auto result = d->slots.insert(
-                    d->slots.end(),
+        auto result = d->slot_list.insert(
+                    d->slot_list.end(),
                     SlotWrapper{slot, default_dispatcher, conn});
 
         // We implicitly share our internal state with the connection here
@@ -132,7 +132,7 @@ public:
     inline void operator()(Arguments... args)
     {
         std::lock_guard<std::mutex> lg(d->guard);
-        for(auto slot : d->slots)
+        for(auto slot : d->slot_list)
         {
             slot(args...);
         }
@@ -141,23 +141,23 @@ public:
 private:
     struct Private
     {
-        typedef std::list<SlotWrapper> SlotContainer;
+        typedef std::list<SlotWrapper> SlotList;
 
-        inline void disconnect_slot_for_iterator(typename SlotContainer::iterator it)
+        inline void disconnect_slot_for_iterator(typename SlotList::iterator it)
         {
             std::lock_guard<std::mutex> lg(guard);
-            slots.erase(it);
+            slot_list.erase(it);
         }
 
         inline void install_dispatcher_for_iterator(const Connection::Dispatcher& dispatcher,
-                                                    typename SlotContainer::iterator it)
+                                                    typename SlotList::iterator it)
         {
             std::lock_guard<std::mutex> lg(guard);
             it->dispatcher = dispatcher;
         }
 
         std::mutex guard;
-        SlotContainer slots;
+        SlotList slot_list;
     };
     std::shared_ptr<Private> d;
 };
@@ -199,7 +199,7 @@ public:
     inline ~Signal()
     {
         std::lock_guard<std::mutex> lg(d->guard);
-        for (auto slot : d->slots)
+        for (auto slot : d->slot_list)
             slot.connection.reset();
     }
 
@@ -232,8 +232,8 @@ public:
 
         std::lock_guard<std::mutex> lg(d->guard);
 
-        auto result = d->slots.insert(
-                    d->slots.end(),
+        auto result = d->slot_list.insert(
+                    d->slot_list.end(),
                     SlotWrapper{slot, default_dispatcher, conn});
 
         // We implicitly share our internal state with the connection here
@@ -263,7 +263,7 @@ public:
     inline void operator()()
     {
         std::lock_guard<std::mutex> lg(d->guard);
-        for(auto slot : d->slots)
+        for(auto slot : d->slot_list)
         {
             slot();
         }
@@ -272,23 +272,23 @@ public:
 private:
     struct Private
     {
-        typedef std::list<SlotWrapper> SlotContainer;
+        typedef std::list<SlotWrapper> SlotList;
 
-        inline void disconnect_slot_for_iterator(typename SlotContainer::iterator it)
+        inline void disconnect_slot_for_iterator(typename SlotList::iterator it)
         {
             std::lock_guard<std::mutex> lg(guard);
-            slots.erase(it);
+            slot_list.erase(it);
         }
 
         inline void install_dispatcher_for_iterator(const Connection::Dispatcher& dispatcher,
-                                                    typename SlotContainer::iterator it)
+                                                    typename SlotList::iterator it)
         {
             std::lock_guard<std::mutex> lg(guard);
             it->dispatcher = dispatcher;
         }
 
         std::mutex guard;
-        SlotContainer slots;
+        SlotList slot_list;
     };
     std::shared_ptr<Private> d;
 };
