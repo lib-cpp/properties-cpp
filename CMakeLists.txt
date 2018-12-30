@@ -4,7 +4,6 @@ project(properties-cpp)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-include(cmake/EnableCoverageReport.cmake)
 include(cmake/PrePush.cmake)
 include(GNUInstallDirs)
 
@@ -42,4 +41,5 @@ add_subdirectory(data)
 add_subdirectory(include)
 add_subdirectory(tests)
 
+# find_package(CoverageReport)
 # enable_coverage_report(posix_process_test linux_process_test)
