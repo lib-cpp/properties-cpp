@@ -2,32 +2,34 @@ set (OLD_CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
 # Don't treat warnings as errors in 3rd_party/{gmock,cucumber-cpp}
 string (REPLACE " -Werror " " " CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
 find_package(Gtest REQUIRED)
-include_directories(${GMOCK_INCLUDE_DIR} ${GTEST_INCLUDE_DIR})
-set (CMAKE_CXX_FLAGS ${OLD_CMAKE_CXX_FLAGS})
+include(GoogleTest)
 
-include_directories(${GTEST_INCLUDE_DIRS})
+set (CMAKE_CXX_FLAGS ${OLD_CMAKE_CXX_FLAGS})
 
 add_executable(
   properties_test
   properties_test.cpp
 )
+target_include_directories(
+  properties_test
+  PRIVATE ${GMOCK_INCLUDE_DIR} ${GTEST_INCLUDE_DIR}
+)
+target_link_libraries(properties_test 
+    gtest gmock 
+    gtest_main
+)
+gtest_discover_tests(properties_test)
 
 add_executable(
   signals_test
   signals_test.cpp
 )
-
-target_link_libraries(
-  properties_test
-
-  ${GTEST_BOTH_LIBRARIES}
-)
-
-target_link_libraries(
+target_include_directories(
   signals_test
-
-  ${GTEST_BOTH_LIBRARIES}
+  PRIVATE ${GMOCK_INCLUDE_DIR} ${GTEST_INCLUDE_DIR}
 )
-
-add_test(properties_test ${CMAKE_CURRENT_BINARY_DIR}/properties_test)
-add_test(signals_test ${CMAKE_CURRENT_BINARY_DIR}/signals_test)
+target_link_libraries(signals_test 
+    gtest gmock 
+    gtest_main
+)
+gtest_discover_tests(signals_test)
