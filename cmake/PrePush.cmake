@@ -78,5 +78,3 @@ add_custom_target(
 #######################################################################
 add_dependencies(extract-pre-push-tarball pre-push-source-tarball)
 add_dependencies(pdebuild extract-pre-push-tarball)
-
-add_dependencies(pre-push pdebuild android-build)

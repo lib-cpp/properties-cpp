@@ -1,6 +1,7 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.10)
 
 project(properties-cpp)
+option (PACKAGE_TESTS "Enables testing of the repository" ON)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
@@ -25,13 +26,12 @@ IF(CMAKE_BUILD_TYPE MATCHES [cC][oO][vV][eE][rR][aA][gG][eE])
   SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ftest-coverage -fprofile-arcs" )
   SET(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -ftest-coverage -fprofile-arcs" )
   SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -ftest-coverage -fprofile-arcs" )
+  SET(PACKAGE_TESTS ON)
 ENDIF(CMAKE_BUILD_TYPE MATCHES [cC][oO][vV][eE][rR][aA][gG][eE])
 
 set(PROPERTIES_CPP_VERSION_MAJOR 0)
 set(PROPERTIES_CPP_VERSION_MINOR 0)
 set(PROPERTIES_CPP_VERSION_PATCH 1)
-
-include(CTest)
 
 include_directories(
   include/
@@ -40,6 +40,10 @@ include_directories(
 add_subdirectory(doc)
 add_subdirectory(data)
 add_subdirectory(include)
-add_subdirectory(tests)
+
+if (PACKAGE_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+endif()
 
 # enable_coverage_report(posix_process_test linux_process_test)
